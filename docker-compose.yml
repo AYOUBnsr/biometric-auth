@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: biometric_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: biometric
+      POSTGRES_PASSWORD: biometric_pass
+      POSTGRES_DB: biometric_auth
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U biometric -d biometric_auth"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: biometric_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://biometric:biometric_pass@postgres:5432/biometric_auth
+      SECRET_KEY: docker-dev-secret-change-in-production
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
+      FACE_SIMILARITY_THRESHOLD: "0.40"
+      VOICE_SIMILARITY_THRESHOLD: "0.75"
+      FRONTEND_URL: http://localhost:5173
+    ports:
+      - "8000:8000"
+    volumes:
+      - speechbrain_cache:/root/.cache/speechbrain_models
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: biometric_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: ""
+    ports:
+      - "5173:4173"
+    command: npx serve dist -l 4173
+
+volumes:
+  pgdata:
+  speechbrain_cache:
