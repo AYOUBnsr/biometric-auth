@@ -5,6 +5,7 @@
       <img src="https://github.com/user-attachments/assets/7845b97a-0398-4b3f-a2c6-630725b4d370" alt="Project Banner">
     </a>
   <br />
+
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![React](https://img.shields.io/badge/React-18+-61dafb.svg)](https://reactjs.org/)
