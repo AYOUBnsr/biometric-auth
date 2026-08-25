@@ -394,7 +394,7 @@ alembic downgrade -1
 
 - The current liveness check is a **basic heuristic** (pixel variance across frames).
 - For production, use a dedicated model like `Silent-Face-Anti-Spoofing` or a commercial SDK.
-- Enable with `ENABLE_LIVENESS_DETECTION=true` — disabled by default.
+- Enable with `ENABLE_LIVENESS_DETECTION=true` — disabled by default..
 
 ### HTTPS in Production
 
